@@ -328,7 +328,13 @@ class TikTokApi:
             dict: The cookies for the session.
         """
         cookies = await session.context.cookies()
-        return {cookie["name"]: cookie["value"] for cookie in cookies}
+        refined_cookies = {}
+        for cookie in cookies:
+            if cookie["name"] == "msToken" and cookie["domain"] == ".tiktok.com":
+                refined_cookies[cookie["name"]] = cookie["value"]
+            elif cookie["name"] not in refined_cookies:
+                refined_cookies[cookie["name"]] = cookie["value"]
+        return refined_cookies
 
     async def run_fetch_script(self, url: str, headers: dict, **kwargs):
         """
